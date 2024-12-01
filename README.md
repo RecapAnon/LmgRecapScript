@@ -2,7 +2,7 @@
 
 ## Bookmarklet
 ```
-Javascript:const previousThreadUrl = document.querySelector('blockquote a[href*="thread"]').href,threadId = previousThreadUrl.match(/thread\/(\d{9})/)[1];document.querySelectorAll('span.quote').forEach(quoteSpan => {const quoteIds = quoteSpan.textContent.match(/>(\d{9})/g);if (quoteIds) quoteSpan.outerHTML = quoteIds.map(id => `<a href="/g/thread/${threadId}#p${id.slice(1)}" class="quotelink">>>${id.slice(1)}</a>`).join(' ');});
+javascript:document.querySelectorAll('span.quote').forEach(quoteSpan => { const post = quoteSpan.parentNode; const previousThreadUrl = post.querySelector('a[href*="thread"]'), threadId = previousThreadUrl && previousThreadUrl.href.match(/thread\/(\d{9})/)[1]; const quoteIds = quoteSpan.textContent.match(/>(\d{9})/g); if (quoteIds) quoteSpan.outerHTML = quoteIds.map(id => { const linkUrl = threadId ? `/g/thread/${threadId}#p${id.slice(1)}%60 : %60#p${id.slice(1)}%60; return %60<a href="${linkUrl}" class="quotelink">>>${id.slice(1)}</a>%60; }).join(' '); });
 ```
 
 ![](https://files.catbox.moe/cz9rb1.png)
@@ -18,12 +18,16 @@ Javascript:const previousThreadUrl = document.querySelector('blockquote a[href*=
 // @include  https://www.4chan.org/*
 // @grant    none
 // ==/UserScript==
-const previousThreadUrl = document.querySelector('blockquote a[href*="thread"]').href,
-    threadId = previousThreadUrl.match(/thread\/(\d{9})/)[1];
 document.querySelectorAll('span.quote').forEach(quoteSpan => {
+    const post = quoteSpan.parentNode;
+    const previousThreadUrl = post.querySelector('a[href*="thread"]'),
+        threadId = previousThreadUrl && previousThreadUrl.href.match(/thread\/(\d{9})/)[1];
     const quoteIds = quoteSpan.textContent.match(/>(\d{9})/g);
-    if (quoteIds) quoteSpan.outerHTML = quoteIds.map(id => `<a href="/g/thread/${threadId}#p${id.slice(1)}" class="quotelink">>>${id.slice(1)}</a>`).join(' ');
-});
+    if (quoteIds) quoteSpan.outerHTML = quoteIds.map(id => {
+      const linkUrl = threadId ? `/g/thread/${threadId}#p${id.slice(1)}` : `#p${id.slice(1)}`;
+      return `<a href="${linkUrl}" class="quotelink">>>${id.slice(1)}</a>`;
+    }).join(' ');
+  });
 ```
 
 ## F.A.Q.
